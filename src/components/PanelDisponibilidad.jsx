@@ -5,6 +5,11 @@ import FilaDisponibilidad from './FilaDisponibilidad'
 import './PanelDisponibilidad.css'
 
 const CATEGORIAS = ['Granizados', 'Micheladas', 'Peceras', 'Licor']
+const FILTROS_ESTADO = [
+  { valor: 'todos', etiqueta: 'Todos' },
+  { valor: 'activo', etiqueta: 'Activos' },
+  { valor: 'inactivo', etiqueta: 'Inactivos' },
+]
 
 /** Agrupa el catálogo fijo por categoría, separando productos de adiciones. */
 function agruparPorCategoria() {
@@ -24,6 +29,14 @@ function nombresDe(ids) {
     .join(', ')
 }
 
+/** @param {string} texto */
+function normalizar(texto) {
+  return texto
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+}
+
 /** Panel principal: lista de productos y adiciones con su switch de disponibilidad. */
 export default function PanelDisponibilidad() {
   const [estados, setEstados] = useState({})
@@ -31,6 +44,10 @@ export default function PanelDisponibilidad() {
   const [errores, setErrores] = useState({})
   const [cargando, setCargando] = useState(true)
   const [errorCarga, setErrorCarga] = useState(null)
+
+  const [busqueda, setBusqueda] = useState('')
+  const [categoriaActiva, setCategoriaActiva] = useState('todas')
+  const [estadoActivo, setEstadoActivo] = useState('todos')
 
   useEffect(() => {
     obtenerDisponibilidad()
@@ -49,6 +66,30 @@ export default function PanelDisponibilidad() {
     }
     return mapa
   }, [])
+
+  const texto = normalizar(busqueda.trim())
+
+  /** @param {import('../data/catalogo').ItemCatalogo} item */
+  function pasaFiltros(item) {
+    if (estadoActivo !== 'todos' && estados[item.id] !== estadoActivo) return false
+    if (texto && !normalizar(item.nombre).includes(texto)) return false
+    return true
+  }
+
+  const gruposFiltrados = grupos
+    .filter((grupo) => categoriaActiva === 'todas' || grupo.categoria === categoriaActiva)
+    .map((grupo) => ({
+      ...grupo,
+      productos: grupo.productos.filter(pasaFiltros),
+      adiciones: grupo.adiciones.filter(pasaFiltros),
+    }))
+    .filter((grupo) => grupo.productos.length > 0 || grupo.adiciones.length > 0)
+
+  function limpiarFiltros() {
+    setBusqueda('')
+    setCategoriaActiva('todas')
+    setEstadoActivo('todos')
+  }
 
   async function cambiarEstado(id) {
     const estadoAnterior = estados[id]
@@ -80,22 +121,78 @@ export default function PanelDisponibilidad() {
     <main className="panel">
       <h1 className="panel__titulo">Disponibilidad</h1>
 
-      {grupos.map((grupo) => (
+      <div className="filtros">
+        <input
+          type="search"
+          inputMode="search"
+          className="filtros__busqueda"
+          placeholder="Buscar producto o adición…"
+          value={busqueda}
+          onChange={(evento) => setBusqueda(evento.target.value)}
+          aria-label="Buscar producto o adición"
+        />
+
+        <div className="filtros__chips" role="group" aria-label="Filtrar por categoría">
+          <button
+            type="button"
+            className={`chip${categoriaActiva === 'todas' ? ' chip--activo' : ''}`}
+            onClick={() => setCategoriaActiva('todas')}
+          >
+            Todas
+          </button>
+          {CATEGORIAS.map((categoria) => (
+            <button
+              key={categoria}
+              type="button"
+              className={`chip${categoriaActiva === categoria ? ' chip--activo' : ''}`}
+              onClick={() => setCategoriaActiva(categoria)}
+            >
+              {categoria}
+            </button>
+          ))}
+        </div>
+
+        <div className="filtros__chips" role="group" aria-label="Filtrar por estado">
+          {FILTROS_ESTADO.map((filtro) => (
+            <button
+              key={filtro.valor}
+              type="button"
+              className={`chip chip--estado${estadoActivo === filtro.valor ? ' chip--activo' : ''}`}
+              onClick={() => setEstadoActivo(filtro.valor)}
+            >
+              {filtro.etiqueta}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {gruposFiltrados.length === 0 && (
+        <p className="panel-mensaje">
+          Nada coincide con los filtros.{' '}
+          <button type="button" className="filtros__limpiar" onClick={limpiarFiltros}>
+            Limpiar filtros
+          </button>
+        </p>
+      )}
+
+      {gruposFiltrados.map((grupo) => (
         <section key={grupo.categoria} className="panel__categoria">
           <h2>{grupo.categoria}</h2>
 
-          <ul className="panel__lista">
-            {grupo.productos.map((item) => (
-              <FilaDisponibilidad
-                key={item.id}
-                nombre={item.nombre}
-                estado={estados[item.id]}
-                guardando={Boolean(guardando[item.id])}
-                error={errores[item.id]}
-                onCambiar={() => cambiarEstado(item.id)}
-              />
-            ))}
-          </ul>
+          {grupo.productos.length > 0 && (
+            <ul className="panel__lista">
+              {grupo.productos.map((item) => (
+                <FilaDisponibilidad
+                  key={item.id}
+                  nombre={item.nombre}
+                  estado={estados[item.id]}
+                  guardando={Boolean(guardando[item.id])}
+                  error={errores[item.id]}
+                  onCambiar={() => cambiarEstado(item.id)}
+                />
+              ))}
+            </ul>
+          )}
 
           {grupo.adiciones.length > 0 && (
             <>
