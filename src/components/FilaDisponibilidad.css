@@ -1,0 +1,75 @@
+.fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.fila__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+
+.fila__nombre {
+  font-family: var(--sans);
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+.fila__detalle {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.fila__estado {
+  font-size: 13px;
+}
+
+.fila__estado--guardando {
+  color: var(--text-muted);
+}
+
+.fila__estado--error {
+  color: var(--pink);
+}
+
+.switch {
+  flex-shrink: 0;
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  padding: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.switch:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.switch__perilla {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.switch--activo {
+  background: color-mix(in srgb, var(--mint) 20%, transparent);
+  border-color: var(--mint);
+}
+
+.switch--activo .switch__perilla {
+  background: var(--mint);
+  transform: translateX(20px);
+}

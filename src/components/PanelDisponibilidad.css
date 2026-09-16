@@ -1,0 +1,50 @@
+.panel {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+  text-align: left;
+}
+
+.panel__titulo {
+  font-family: var(--heading);
+  color: var(--text-h);
+  font-size: 32px;
+  margin: 0 0 32px;
+}
+
+.panel__categoria {
+  margin-bottom: 32px;
+}
+
+.panel__categoria h2 {
+  font-family: var(--heading);
+  color: var(--mint);
+  font-size: 18px;
+  margin: 0 0 8px;
+}
+
+.panel__categoria h3 {
+  font-family: var(--sans);
+  color: var(--text-muted);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 16px 0 4px;
+}
+
+.panel__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.panel-mensaje {
+  font-family: var(--sans);
+  color: var(--text);
+  text-align: center;
+  margin-top: 64px;
+}
+
+.panel-mensaje--error {
+  color: var(--pink);
+}

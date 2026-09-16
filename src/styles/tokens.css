@@ -1,0 +1,23 @@
+/**
+ * Tokens de marca de BoraBora. Los valores de fondo y acentos, y las
+ * tipografías, vienen dados tal cual en CLAUDE.md. Los tonos de texto y
+ * borde no estaban especificados ahí, así que se completaron aquí con
+ * valores razonables para un fondo negro — si el tokens.css real de la
+ * carta define otros, reemplázalos por esos.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg: #0a0a10;
+  --mint: #29ffb0;
+  --pink: #ff2f7e;
+
+  --text: #d8d8e2;
+  --text-muted: #8b8b9a;
+  --text-h: #ffffff;
+  --border: #26262f;
+
+  --heading: 'Unbounded', system-ui, sans-serif;
+  --sans: 'Manrope', system-ui, sans-serif;
+}

@@ -5,12 +5,11 @@
  * lee de una variable de entorno del servidor y lo agrega al body antes
  * de reenviar la petición.
  *
- * TODO (seguridad, ver CLAUDE.md sección 1): esta función debe verificar
- * primero que quien la llama tiene una sesión válida (cookie httpOnly)
- * antes de tocar la hoja, y responder 401 si no la hay. El sistema de
- * login todavía no existe en este proyecto — hay que añadir esa
- * verificación aquí en cuanto esté implementado, antes de desplegar a
- * producción.
+ * Esta versión no exige sesión (decisión explícita, ver CLAUDE.md):
+ * cualquiera con la URL del panel puede escribir. La única protección es
+ * que el ADMIN_TOKEN nunca sale del servidor, más la validación de id y
+ * estado de abajo. Si en el futuro se agrega login, esta función deberá
+ * verificar la sesión antes de tocar la hoja.
  */
 
 const APPS_SCRIPT_URL =
