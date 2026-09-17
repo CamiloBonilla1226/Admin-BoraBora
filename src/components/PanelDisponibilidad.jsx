@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { catalogo } from '../data/catalogo'
 import { actualizarDisponibilidad, obtenerDisponibilidad } from '../lib/api'
 import FilaDisponibilidad from './FilaDisponibilidad'
@@ -21,13 +21,6 @@ function agruparPorCategoria() {
 }
 
 const grupos = agruparPorCategoria()
-
-/** @param {string[]} ids */
-function nombresDe(ids) {
-  return ids
-    .map((id) => catalogo.find((item) => item.id === id)?.nombre ?? id)
-    .join(', ')
-}
 
 /** @param {string} texto */
 function normalizar(texto) {
@@ -54,17 +47,6 @@ export default function PanelDisponibilidad() {
       .then((mapa) => setEstados(mapa))
       .catch(() => setErrorCarga('No se pudo cargar la disponibilidad. Intenta recargar la página.'))
       .finally(() => setCargando(false))
-  }, [])
-
-  const detallesAdiciones = useMemo(() => {
-    /** @type {Record<string, string>} */
-    const mapa = {}
-    for (const grupo of grupos) {
-      for (const adicion of grupo.adiciones) {
-        mapa[adicion.id] = adicion.productos ? `Aplica a: ${nombresDe(adicion.productos)}` : undefined
-      }
-    }
-    return mapa
   }, [])
 
   const texto = normalizar(busqueda.trim())
@@ -205,7 +187,6 @@ export default function PanelDisponibilidad() {
                     estado={estados[item.id]}
                     guardando={Boolean(guardando[item.id])}
                     error={errores[item.id]}
-                    detalle={detallesAdiciones[item.id]}
                     onCambiar={() => cambiarEstado(item.id)}
                   />
                 ))}
